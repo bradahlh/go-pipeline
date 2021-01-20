@@ -8,7 +8,7 @@ spec:
     - name: url
       value: https://github.com/bradahlh/hellofromgo
     - name: revision
-      value: dev
+      value: 6a71578c52ff4308a3af83fa09c98ada2acf84ce
 ---
 # apiVersion: tekton.dev/v1alpha1
 # kind: PipelineResource
