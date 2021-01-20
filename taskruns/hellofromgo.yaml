@@ -1,0 +1,12 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: hello-from-go
+spec:
+  taskRef:
+    name: build-app
+  resources:
+    inputs:
+      - name: repo
+        resourceRef:
+          name: git-source
