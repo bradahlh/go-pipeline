@@ -8,15 +8,12 @@ spec:
     - name: contextDir
       description: the context dir within source
       default: .
-    # - name: mavenMirrorUrl
-    #   description: the maven mirrror url
-    #   default: https://repo.maven.apache.org/maven2/
-    # - name: destinationImage
-    #   description: the fully qualified image name
-    #   default: "$(outputs.resources.builtImage.url)"
-    # - name: dockerFile
-    #   description: the docker file to used for building the application
-    #   default: Dockerfile
+    - name: destinationImage
+      description: the fully qualified image name
+      default: "$(outputs.resources.hello-image.url)"
+    - name: dockerFile
+      description: the docker file to used for building the application
+      default: Dockerfile
     # - name: tlsVerify
     #   description: tls verify
     #   type: string
@@ -25,9 +22,9 @@ spec:
     inputs:
       - name: repo
         type: git
-    # outputs:
-    #   - name: builtImage
-    #     type: image
+    outputs:
+      - name: hello-image
+        type: image
   steps:
     - name: build-sources
       image: docker.io/golang:1.15
@@ -43,25 +40,25 @@ spec:
       script: |
         #!/usr/bin/env bash
         ls -ltr /workspace/repo
-    # - name: build-image
-    #   image: quay.io/buildah/stable
-    #   workingDir: "/workspace/source/$(inputs.params.contextDir)"
-    #   command:
-    #     - "buildah"
-    #   args:
-    #     - "bud"
-    #     - "--layers"
-    #     - "-f"
-    #     - "$(inputs.params.dockerFile)"
-    #     - "-t"
-    #     - "$(inputs.params.destinationImage)"
-    #     - "."
-    #   securityContext:
-    #     privileged: true
-    #     runAsUser: 0
-    #   volumeMounts:
-    #     - name: varlibc
-    #       mountPath: /var/lib/containers
+    - name: build-image
+      image: quay.io/buildah/stable
+      workingDir: "/workspace/repo/$(inputs.params.contextDir)"
+      command:
+        - buildah
+      args:
+        - bud
+        - --layers
+        - -f
+        - $(inputs.params.dockerFile)
+        - -t
+        - $(inputs.params.destinationImage)
+        - .
+      securityContext:
+        privileged: true
+        runAsUser: 0
+      volumeMounts:
+        - name: varlibc
+          mountPath: /var/lib/containers
     # - name: push-image
     #   image: quay.io/buildah/stable
     #   workingDir: "/workspace/source/$(inputs.params.contextDir)"
@@ -78,6 +75,6 @@ spec:
     #   volumeMounts:
     #     - name: varlibc
     #       mountPath: /var/lib/containers
-  # volumes:
-  #   - name: varlibc
-  #     emptyDir: {}
+  volumes:
+    - name: varlibc
+      emptyDir: {}
