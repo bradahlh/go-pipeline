@@ -8,5 +8,20 @@ spec:
   resources:
     inputs:
       - name: repo
-        resourceRef:
-          name: git-source
+        resourceSpec:
+          type: git
+          params:
+            - name: url
+              value: https://github.com/bradahlh/hellofromgo
+            # - name: revision
+            #   value: 6a71578c52ff4308a3af83fa09c98ada2acf84ce
+    outputs:
+      - name: hello-image
+        resourceSpec:
+          type: image
+          params:
+            - name: url
+              # use internal registry
+              value: example.com/bradahlh/hellofromgo
+              # if you are on OpenShift uncomment the line below
+              #value: "image-registry.openshift-image-registry.svc:5000/tektontutorial/greeter"
