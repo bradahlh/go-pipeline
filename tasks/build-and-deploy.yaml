@@ -26,20 +26,21 @@ spec:
       - name: hello-image
         type: image
   steps:
-    - name: build-sources
+    - name: install-dependencies
       image: docker.io/golang:1.15
       workingDir: "/workspace/repo/$(inputs.params.contextDir)"
       command:
         - go
       args:
-        - build
-        - -o
-        - bin/hellofromgo
-    - name: ls-build-sources
-      image: bash:latest
-      script: |
-        #!/usr/bin/env bash
-        ls -ltr /workspace/repo
+        - mod
+        - download
+    - name: run-unit-tests
+      image: docker.io/golang:1.15
+      workingDir: "/workspace/repo/$(inputs.params.contextDir)"
+      command:
+        - go
+      args:
+        - test
     - name: build-image
       image: quay.io/buildah/stable
       workingDir: "/workspace/repo/$(inputs.params.contextDir)"
