@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-unit-tests
+spec:
+  params:
+    - name: contextDir
+      description: the context dir within source
+      default: .
+  resources:
+    inputs:
+      - name: repo
+        type: git
+  steps:
+    - name: install-dependencies
+      image: docker.io/golang:1.15
+      workingDir: "/workspace/repo/$(inputs.params.contextDir)"
+      command:
+        - go
+      args:
+        - mod
+        - download
+    - name: run-unit-tests
+      image: docker.io/golang:1.15
+      workingDir: "/workspace/repo/$(inputs.params.contextDir)"
+      command:
+        - go
+      args:
+        - test

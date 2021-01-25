@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: hello-go-pipeline
+spec:
+  resources:
+    - name: app-repo
+      type: git
+    # - name: app-image
+    #   type: image
+  tasks:
+    - name: test
+      taskRef:
+        name: run-unit-tests
+      resources:
+        inputs:
+          - name: repo
+            resource: app-repo
+    # - name: deploy
+    #   taskRef:
+    #     name: build-and-deploy
+    #   resources:
+    #     inputs:
+    #       - name: repo
+    #         resource: app-code
+    #     outputs:
+    #       - name: destination-image
+    #         resource: app-image
+    #   runAfter:
+    #     - test

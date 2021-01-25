@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: run-unit-tests-tr
+spec:
+  taskRef:
+    name: run-unit-tests
+  resources:
+    inputs:
+      - name: repo
+        resourceSpec:
+          type: git
+          params:
+            - name: url
+              value: https://github.com/bradahlh/hellofromgo
+            - name: revision
+              value: main # Branch to be used
