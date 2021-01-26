@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: hello-go-pr
+spec:
+  pipelineRef:
+    name: hello-go-pipeline
+  resources:
+    - name: app-repo
+      resourceRef:
+        name: app-code

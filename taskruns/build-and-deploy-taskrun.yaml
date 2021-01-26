@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: build-and-deploy-tr
+spec:
+  taskRef:
+    name: build-and-deploy
+  resources:
+    inputs:
+      - name: repo
+        resourceSpec:
+          type: git
+          params:
+            - name: url
+              value: https://github.com/bradahlh/hellofromgo
+            - name: revision
+              value: main # Branch to be used
+    outputs:
+      - name: app-image
+        resourceSpec:
+          type: image
+          params:
+            - name: url
+              value: example.com/bradahlh/hellofromgo
