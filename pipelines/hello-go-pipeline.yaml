@@ -1,30 +1,43 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: hello-go-pipeline
+  name: pipeline-hello-go
 spec:
-  resources:
-    - name: app-repo
-      type: git
-    # - name: app-image
-    #   type: image
+  params:
+    - name: repo-url
+      type: string
+      description: The git repo URL to clone from
+    - name: branch-name
+      type: string
+      description: The git branch to clone
+  workspaces:
+    - name: shared-data
+      description: |
+        This workspace receives the cloned git repo and is passed to next
+        Pipeline Task, which in turn writes the readme to the output.
   tasks:
-    - name: test
+    - name: fetch-repo
       taskRef:
-        name: run-unit-tests
-      resources:
-        inputs:
-          - name: repo
-            resource: app-repo
-    # - name: deploy
-    #   taskRef:
-    #     name: build-and-deploy
-    #   resources:
-    #     inputs:
-    #       - name: repo
-    #         resource: app-code
-    #     outputs:
-    #       - name: destination-image
-    #         resource: app-image
-    #   runAfter:
-    #     - test
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-data
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.branch-name)
+    - name: cat-readme
+      runAfter:
+        - "fetch-repo"
+      workspaces:
+        - name: source
+          workspace: shared-data
+      taskSpec:
+        workspaces:
+          - name: source
+        steps:
+          - image: zshusers/zsh:latest
+            script: |
+              #!/usr/bin/env zsh
+              cat $(workspaces.source.path)/README.md

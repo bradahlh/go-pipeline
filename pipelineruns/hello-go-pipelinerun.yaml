@@ -1,11 +1,21 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: hello-go-pr
+  name: pipelinerun-hello-go
 spec:
   pipelineRef:
-    name: hello-go-pipeline
-  resources:
-    - name: app-repo
-      resourceRef:
-        name: app-code
+    name: pipeline-hello-go
+  workspaces:
+    - name: shared-data
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - "ReadWriteOnce"
+          resources:
+            requests:
+              storage: 1Gi
+  params:
+    - name: repo-url
+      value: https://github.com/bradahlh/hellofromgo.git
+    - name: branch-name
+      value: main
