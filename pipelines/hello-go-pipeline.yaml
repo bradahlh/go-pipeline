@@ -13,8 +13,9 @@ spec:
   workspaces:
     - name: shared-data
       description: |
-        This workspace receives the cloned git repo and is passed to next
-        Pipeline Task, which in turn writes the readme to the output.
+        This workspace receives the cloned git repo from the first Task
+        and is passed to the next Task, which in turn runs the Go app
+        tests.
   tasks:
     - name: fetch-repo
       taskRef:
